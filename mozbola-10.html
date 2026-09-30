@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MOZBOLA — Notícias do futebol moçambicano</title>
+<style>
+:root{--red:#c41230;--red2:#a00e28;--dark:#1a1a1a}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,Helvetica,sans-serif;background:#f0f0f0;color:#1a1a1a;font-size:15px;line-height:1.4}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+button{cursor:pointer;border:0;background:0;font:inherit}
+
+/* TOP like A Bola */
+.top{background:var(--dark);color:#ccc;font-size:12px;padding:6px 12px;display:flex;justify-content:space-between;align-items:center}
+.top a{color:#ddd;margin-left:12px}
+
+/* HEADER red bar */
+.header{background:var(--red);color:#fff;position:sticky;top:0;z-index:40}
+.header-inner{max-width:1120px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:8px 12px}
+.burger{color:#fff;font-size:22px;width:36px}
+.logo{font-size:28px;font-weight:900;letter-spacing:-1px;color:#fff;line-height:1}
+.logo span{opacity:.95}
+.nav{display:flex;flex:1;gap:2px;flex-wrap:wrap}
+.nav a{color:#fff;font-size:12px;font-weight:700;text-transform:uppercase;padding:8px 9px;border-radius:2px}
+.nav a:hover{background:rgba(0,0,0,.2)}
+.btn-enter{background:#fff;color:var(--red);font-weight:800;font-size:12px;padding:8px 14px;border-radius:2px;text-transform:uppercase}
+
+/* Category label A Bola style */
+.cat{font-size:11px;font-weight:800;color:var(--red);letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px}
+.cat::before{content:"// "}
+.cat::after{content:" //"}
+
+.wrap{max-width:1120px;margin:0 auto;padding:12px}
+
+/* Main grid */
+.layout{display:grid;gap:14px}
+@media(min-width:900px){.layout{grid-template-columns:1fr 300px}}
+
+/* Featured story */
+.feature{position:relative;background:#222;overflow:hidden;min-height:260px}
+.feature img{width:100%;height:100%;object-fit:cover;object-position:center top;position:absolute;inset:0;min-height:260px}
+.feature .shade{position:relative;z-index:1;min-height:260px;display:flex;flex-direction:column;justify-content:flex-end;padding:16px;background:linear-gradient(transparent 20%,rgba(0,0,0,.88));color:#fff}
+.feature .cat{color:#ffb3bf}
+.feature h1{font-size:22px;line-height:1.2;font-weight:800;margin-top:4px}
+@media(min-width:700px){.feature,.feature img,.feature .shade{min-height:380px}.feature h1{font-size:28px}}
+
+/* Secondary list */
+.stack{display:flex;flex-direction:column;gap:0;background:#fff}
+.stack a{display:grid;grid-template-columns:100px 1fr;gap:10px;padding:10px;border-bottom:1px solid #e8e8e8}
+.stack a:hover{background:#fafafa}
+.stack img{width:100px;height:70px;object-fit:cover;object-position:center}
+.stack h3{font-size:14px;font-weight:700;line-height:1.25}
+.stack .time{font-size:11px;color:#888;margin-top:4px}
+
+/* Section title */
+.sec-title{background:var(--dark);color:#fff;font-size:13px;font-weight:800;text-transform:uppercase;padding:8px 12px;margin:16px 0 0}
+.sec-body{background:#fff;border:1px solid #e0e0e0;border-top:0}
+
+/* News row cards */
+.rows a{display:grid;grid-template-columns:120px 1fr;gap:12px;padding:12px;border-bottom:1px solid #eee}
+.rows a:last-child{border-bottom:0}
+.rows img{width:120px;height:80px;object-fit:cover}
+.rows h3{font-size:15px;font-weight:700;line-height:1.3}
+.rows p{font-size:13px;color:#555;margin-top:4px}
+@media(min-width:700px){
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;padding:12px}
+  .grid3 a{display:block;border:0;padding:0}
+  .grid3 img{width:100%;height:140px}
+  .grid3 .pad{padding:10px 2px}
+}
+
+/* Ultimas sidebar */
+.ultimas{background:#fff;border:1px solid #e0e0e0}
+.ultimas h2{background:var(--red);color:#fff;font-size:13px;padding:8px 12px;text-transform:uppercase}
+.ultimas li{list-style:none;display:flex;gap:10px;padding:10px 12px;border-bottom:1px solid #eee;font-size:13px}
+.ultimas time{color:var(--red);font-weight:800;min-width:40px;font-size:12px}
+.ultimas a:hover{text-decoration:underline}
+
+/* Club strip */
+.clubs{display:flex;gap:6px;overflow-x:auto;padding:10px 0;scrollbar-width:thin}
+.clubs a{white-space:nowrap;background:#fff;border:1px solid #ddd;padding:8px 12px;font-size:12px;font-weight:700;border-radius:2px}
+.clubs a:hover{border-color:var(--red);color:var(--red)}
+
+/* Footer A Bola style */
+.footer{background:var(--dark);color:#aaa;margin-top:30px;padding:28px 12px 16px;font-size:13px}
+.footer-grid{max-width:1120px;margin:0 auto;display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+@media(min-width:700px){.footer-grid{grid-template-columns:2fr 1fr 1fr 1fr}}
+.footer h4{color:#fff;font-size:12px;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px}
+.footer a{display:block;color:#bbb;margin:5px 0}
+.footer a:hover{color:#fff}
+.footer-bottom{max-width:1120px;margin:20px auto 0;padding-top:14px;border-top:1px solid #333;font-size:11px;color:#777;display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between}
+
+/* Article */
+#view-home{display:block}
+#view-art{display:none;background:#fff;min-height:100vh}
+#view-art.on{display:block}
+#view-home.off{display:none}
+.art{max-width:740px;margin:0 auto;padding:12px 14px 40px}
+.art .back{display:inline-block;background:var(--red);color:#fff;font-weight:700;padding:10px 14px;margin:8px 0 14px}
+.art .cover{width:100%;height:220px;object-fit:cover;object-position:center top;background:#222}
+.art h1{font-size:24px;margin:12px 0 8px;line-height:1.25}
+.art .meta{color:#777;font-size:13px;margin-bottom:16px}
+.art .body{font-size:16px;line-height:1.65}
+.art .body p{margin-bottom:14px}
+
+@media(max-width:799px){
+  .nav{display:none}
+  .nav.open{display:flex;flex-direction:column;position:absolute;left:0;right:0;top:52px;background:var(--red);padding:8px;z-index:30}
+  .btn-enter{display:none}
+}
+
+.feature-rotator{position:absolute;inset:0}
+.feature-rotator img{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;object-position:center top;
+  opacity:0;transition:opacity .6s ease;
+  min-height:260px;
+}
+.feature-rotator img.active{opacity:1;z-index:1}
+#feature-img{transition:opacity .3s ease;opacity:1}
+.feature .shade{z-index:2}
+
+</style>
+</head>
+<body>
+
+<div id="view-home">
+  <div class="top">
+    <span>Moçambique</span>
+    <div>
+      <a href="#ultimas">Últimas</a>
+      <a href="#tabela">Classificação</a>
+    </div>
+  </div>
+
+  <header class="header">
+    <div class="header-inner">
+      <button class="burger" id="burger" type="button" aria-label="Menu">☰</button>
+      <a href="#" class="logo" id="logo">MOZBOLA</a>
+      <nav class="nav" id="nav">
+        <a href="#inicio">Início</a>
+        <a href="#nacional">Nacional</a>
+        <a href="#mambas">Mambas</a>
+        <a href="#mocambola">Moçambola</a>
+        <a href="#ultimas">Últimas</a>
+      </nav>
+      <span class="btn-enter">Entrar</span>
+    </div>
+  </header>
+
+  <div class="wrap" id="inicio">
+    <div class="clubs">
+      <a href="#nacional">Black Bulls</a>
+      <a href="#nacional">Costa do Sol</a>
+      <a href="#nacional">Ferroviário</a>
+      <a href="#nacional">Maxaquene</a>
+      <a href="#nacional">LD Maputo</a>
+      <a href="#mambas">Mambas</a>
+    </div>
+
+    <div class="layout">
+      <div>
+        <!-- FEATURE -->
+        <a href="#" class="feature" data-i="0" id="feature-post">
+                    <div class="feature-rotator" id="feature-rotator">
+            <img class="active" id="feature-img" src="https://images.unsplash.com/photo-1566577739112-5180d4bf9390?w=1000&q=80" alt="Jogador em ação">
+          </div>
+          <div class="shade">
+            <div class="cat" style="color:#ffb3bf">Mambas</div>
+            <h1>Mambas convocam 26 jogadores para o estágio em Maputo</h1>
+          </div>
+        </a>
+
+        <div class="sec-title" id="nacional">Em destaque</div>
+        <div class="sec-body stack" id="destaque"></div>
+
+        <div class="sec-title" id="mocambola">Moçambola</div>
+        <div class="sec-body rows" id="liga"></div>
+
+        <div class="sec-title" id="mambas">Mambas</div>
+        <div class="sec-body rows" id="mambas-sec"></div>
+      </div>
+
+      <aside>
+        <div class="ultimas" id="ultimas">
+          <h2>Últimas</h2>
+          <ul id="ultimas-ul"></ul>
+        </div>
+        <div class="sec-title" id="tabela" style="margin-top:14px">Moçambola</div>
+        <div class="sec-body" style="padding:0;overflow-x:auto">
+          <table>
+            <thead><tr><th>#</th><th>Equipa</th><th>Pts</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td>Black Bulls</td><td style="color:#c41230;font-weight:800">40</td></tr>
+              <tr><td>2</td><td>Costa do Sol</td><td style="color:#c41230;font-weight:800">36</td></tr>
+              <tr><td>3</td><td>Ferroviário Maputo</td><td style="color:#c41230;font-weight:800">34</td></tr>
+              <tr><td>4</td><td>Maxaquene</td><td style="color:#c41230;font-weight:800">32</td></tr>
+              <tr><td>5</td><td>LD Maputo</td><td style="color:#c41230;font-weight:800">28</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-grid">
+      <div>
+        <h4>MOZBOLA</h4>
+        <p style="margin-bottom:8px">Notícias de futebol 100% moçambicano — Moçambola, Mambas e clubes nacionais.</p>
+      </div>
+      <div>
+        <h4>Secções</h4>
+        <a href="#nacional">Nacional</a>
+        <a href="#mambas">Mambas</a>
+        <a href="#mocambola">Moçambola</a>
+        <a href="#ultimas">Últimas</a>
+      </div>
+      <div>
+        <h4>Clubes</h4>
+        <a href="#nacional">Black Bulls</a>
+        <a href="#nacional">Costa do Sol</a>
+        <a href="#nacional">Ferroviário Maputo</a>
+        <a href="#nacional">Maxaquene</a>
+      </div>
+      <div>
+        <h4>Info</h4>
+        <a href="#inicio">Início</a>
+        <a href="#tabela">Classificação</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 MOZBOLA</span>
+      <span>Futebol moçambicano</span>
+    </div>
+  </footer>
+</div>
+
+<div id="view-art">
+  <div class="art">
+    <button type="button" class="back" id="back1">← Voltar</button>
+    <img class="cover" id="a-img" alt="">
+    <div class="cat" id="a-cat" style="margin-top:10px"></div>
+    <h1 id="a-title"></h1>
+    <div class="meta" id="a-meta"></div>
+    <div class="body" id="a-body"></div>
+    <button type="button" class="back" id="back2">← Voltar</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  // Fotos de JOGADORES em ação (não campos vazios)
+  var PHOTOS = [
+    "https://images.unsplash.com/photo-1566577739112-5180d4bf9390?w=900&q=80",
+    "https://images.unsplash.com/photo-1553778263-73a83bab9b0c?w=900&q=80",
+    "https://images.unsplash.com/photo-1606925797300-0b35e9d1794f?w=900&q=80",
+    "https://images.unsplash.com/photo-1517927033932-b3d18e61fb3a?w=900&q=80",
+    "https://images.unsplash.com/photo-1543326727-cf6c39e8f84c?w=900&q=80",
+    "https://images.unsplash.com/photo-1489944440615-453fc2b6a9a9?w=900&q=80",
+    "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=900&q=80",
+    "https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=900&q=80"
+  ];
+
+  function corpo(titulo){
+    var frases = [
+      "As Mambas preparam o próximo ciclo de jogos com concentração em Maputo e olho na competitividade regional.",
+      "Na Moçambola, Black Bulls, Costa do Sol, Ferroviário de Maputo e Maxaquene continuam a disputar os lugares da frente.",
+      "O selecionador valoriza jogadores em ritmo de competição e pediu intensidade nos treinos de manhã e de tarde.",
+      "Dirigentes sublinham a importância de gerir o plantel entre as exigências da liga e as convocatórias nacionais.",
+      "Os adeptos em Moçambique respondem quando há espetáculo, resultados e informação clara sobre as equipas.",
+      "A formação nos clubes alimenta o futuro das Mambas e a qualidade do campeonato nacional.",
+      "Cada clássico em Maputo eleva a temperatura: bilheteira, cânticos e rivalidade saudável dentro das quatro linhas.",
+      "A análise tática aponta para transições rápidas e atenção redobrada às bolas paradas."
+    ];
+    var html="", n=0, i=0;
+    while(n<2300){
+      var p = frases[i%frases.length]+" Em relação a «"+titulo+"», o MOZBOLA acompanha os factos de jogo, as decisões técnicas e o impacto na tabela da Moçambola e no trabalho das Mambas. ";
+      p += frases[(i+2)%frases.length]+" O futebol moçambicano vive destes momentos de decisão e de acompanhamento diário.";
+      html += "<p>"+p+p+"</p>";
+      n += p.length*2;
+      i++;
+      if(i>35) break;
+    }
+    return html;
+  }
+
+  var NEWS = [
+    {cat:"Mambas", title:"Mambas convocam 26 jogadores para o estágio em Maputo", time:"20:15", img:PHOTOS[0]},
+    {cat:"Moçambola", title:"Black Bulls vencem e isolam-se no topo da tabela", time:"19:40", img:PHOTOS[1]},
+    {cat:"Nacional", title:"Costa do Sol reforça o ataque para a reta final", time:"18:55", img:PHOTOS[2]},
+    {cat:"Clássico", title:"Maxaquene e Ferroviário: o clássico que para Maputo", time:"18:10", img:PHOTOS[3]},
+    {cat:"Nacional", title:"Ferroviário promove três jogadores da formação", time:"17:30", img:PHOTOS[4]},
+    {cat:"Nacional", title:"LD Maputo apresenta novo treinador", time:"16:45", img:PHOTOS[5]},
+    {cat:"Mambas", title:"Selecionador pede intensidade nos treinos das Mambas", time:"15:20", img:PHOTOS[6]},
+    {cat:"Moçambola", title:"Black Bulls viajam com plantel quase completo", time:"14:05", img:PHOTOS[7]},
+    {cat:"Nacional", title:"Costa do Sol abre bilheteira antecipada aos sócios", time:"13:10", img:PHOTOS[1]},
+    {cat:"Mambas", title:"Lista das Mambas mistura Moçambola e diáspora", time:"12:00", img:PHOTOS[0]}
+  ];
+  NEWS.forEach(function(n){ n.body = corpo(n.title); });
+
+  // Destaque (stack under feature)
+  var dest = document.getElementById("destaque");
+  for(var i=1;i<=5;i++){
+    var n=NEWS[i];
+    dest.innerHTML += '<a href="#" data-i="'+i+'"><img src="'+n.img+'" alt=""><div><div class="cat">'+n.cat+'</div><h3>'+n.title+'</h3><div class="time">'+n.time+'</div></div></a>';
+  }
+
+  // Liga + Mambas sections
+  function fill(id, arr){
+    var el=document.getElementById(id);
+    arr.forEach(function(i){
+      var n=NEWS[i];
+      el.innerHTML += '<a href="#" data-i="'+i+'"><img src="'+n.img+'" alt=""><div><div class="cat">'+n.cat+'</div><h3>'+n.title+'</h3><p>'+n.time+'</p></div></a>';
+    });
+  }
+  fill("liga",[1,2,3,4,7]);
+  fill("mambas-sec",[0,6,9]);
+
+  var ul=document.getElementById("ultimas-ul");
+  NEWS.forEach(function(n,i){
+    ul.innerHTML += '<li><time>'+n.time+'</time><a href="#" data-i="'+i+'">'+n.title+'</a></li>';
+  });
+
+  function openArt(i){
+    var n=NEWS[i]; if(!n) return;
+    document.getElementById("a-img").src=n.img;
+    document.getElementById("a-cat").textContent=n.cat;
+    document.getElementById("a-title").textContent=n.title;
+    document.getElementById("a-meta").textContent=n.time+" · MOZBOLA";
+    document.getElementById("a-body").innerHTML=n.body;
+    document.getElementById("view-home").classList.add("off");
+    document.getElementById("view-art").classList.add("on");
+    window.scrollTo(0,0);
+  }
+  function closeArt(){
+    document.getElementById("view-art").classList.remove("on");
+    document.getElementById("view-home").classList.remove("off");
+  }
+
+  document.body.addEventListener("click", function(e){
+    var el=e.target.closest("[data-i]");
+    if(el){ e.preventDefault(); openArt(parseInt(el.getAttribute("data-i"),10)); }
+  });
+  document.getElementById("back1").onclick=closeArt;
+  document.getElementById("back2").onclick=closeArt;
+  document.getElementById("logo").onclick=function(e){e.preventDefault();closeArt();};
+  document.getElementById("burger").onclick=function(){document.getElementById("nav").classList.toggle("open");};
+
+  /* 1.º post → API Pexels: fotos novas, SEM repetir */
+  (function(){
+    var img = document.getElementById('feature-img');
+    if (!img) return;
+
+    var API_KEY = 'SXkZ68NSP0EZcMb6bBrHaSxXpGkzu7AOJKzdIhLco82bpXWFIgLz99au';
+    var queries = ['soccer player', 'football match', 'soccer action', 'football stadium fans', 'soccer team'];
+    var qIndex = 0;
+    var page = 1;
+    var queue = [];
+    var used = {};
+    var loading = false;
+
+    function pickUrl(photo) {
+      if (!photo || !photo.src) return null;
+      return photo.src.large || photo.src.medium || photo.src.original || null;
+    }
+
+    async function fetchMore() {
+      if (loading) return;
+      loading = true;
+      try {
+        var q = queries[qIndex % queries.length];
+        var url = 'https://api.pexels.com/v1/search?query=' + encodeURIComponent(q) +
+          '&per_page=15&page=' + page + '&orientation=landscape';
+        var res = await fetch(url, {
+          headers: { Authorization: API_KEY, Accept: 'application/json' }
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        var data = await res.json();
+        var added = 0;
+        (data.photos || []).forEach(function(ph) {
+          var id = String(ph.id);
+          if (used[id]) return;
+          var src = pickUrl(ph);
+          if (!src) return;
+          used[id] = true;
+          queue.push(src);
+          added++;
+        });
+        if (added === 0) {
+          // próxima query / página
+          page++;
+          if (page > 20) { page = 1; qIndex++; }
+        } else {
+          page++;
+        }
+        if (page > 15) { page = 1; qIndex++; }
+      } catch (e) {
+        console.warn('Pexels feature:', e);
+      }
+      loading = false;
+    }
+
+    async function showNext() {
+      if (queue.length < 3) await fetchMore();
+      if (!queue.length) return;
+      var src = queue.shift();
+      img.style.opacity = '0';
+      setTimeout(function() {
+        img.src = src;
+        img.alt = 'Foto futebol (Pexels)';
+        img.style.opacity = '1';
+      }, 280);
+      if (queue.length < 5) fetchMore();
+    }
+
+    // arranque
+    fetchMore().then(function(){ showNext(); });
+    setInterval(showNext, 2000);
+  })();
+
+
+  
+})();
+</script>
+</body>
+</html>
