@@ -1,0 +1,1382 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MOZBOLA — Futebol moçambicano</title>
+<style>
+:root{
+  --red:#c41230;--red-dark:#9e0e26;--black:#111;--muted:#666;
+  --line:#ececec;--bg:#f4f4f4;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:Arial,Helvetica,sans-serif;background:#fff;color:var(--black);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%;background:#e8e8e8}
+button{font:inherit;border:0;background:0;cursor:pointer}
+
+/* HEADER */
+.header{background:var(--red);position:sticky;top:0;z-index:50;box-shadow:0 1px 0 rgba(0,0,0,.15)}
+.header-row{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:10px;padding:0 10px;height:52px}
+.burger{color:#fff;font-size:22px;width:40px;height:40px;display:grid;place-items:center}
+.logo{font-size:24px;font-weight:900;color:#fff;letter-spacing:-.8px}
+.nav{display:flex;flex:1;overflow-x:auto;gap:0;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nav a{color:#fff;font-size:11px;font-weight:700;text-transform:uppercase;padding:16px 9px;white-space:nowrap;opacity:.95}
+.nav a:hover{background:rgba(0,0,0,.15)}
+.btn-in{background:#fff;color:var(--red);font-weight:800;font-size:11px;padding:7px 12px;text-transform:uppercase;border-radius:2px}
+
+.subnav{background:#fff;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none}
+.subnav-inner{max-width:1100px;margin:0 auto;display:flex;gap:0;padding:0 8px}
+.subnav a{padding:10px 12px;font-size:13px;font-weight:700;color:#333;white-space:nowrap;border-bottom:3px solid transparent}
+.subnav a:hover,.subnav a.on{color:var(--red);border-bottom-color:var(--red)}
+
+.wrap{max-width:1100px;margin:0 auto;padding:0 10px 24px}
+
+/* CLUBS */
+.clubs{display:flex;gap:8px;overflow-x:auto;padding:12px 0 8px;scrollbar-width:none}
+.clubs a{
+  flex:0 0 auto;width:48px;height:48px;border-radius:50%;
+  background:#f0f0f0;border:1px solid #ddd;display:grid;place-items:center;
+  font-size:10px;font-weight:800;text-align:center;line-height:1.1;color:#333
+}
+.clubs a:hover{border-color:var(--red);color:var(--red)}
+
+/* Faixa amarela rolante + barra "AO VIVO" piscante (por baixo do big-post) */
+.yellow-marquee-wrap{
+  background:#000;border-radius:6px;margin:10px 0 0;padding:8px 10px;
+  display:flex;align-items:center;gap:10px;overflow:hidden
+}
+.yellow-marquee{flex:1;overflow:hidden;white-space:nowrap;mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+.yellow-marquee span{
+  display:inline-block;color:#ffd400;font-size:13px;font-weight:900;
+  text-transform:uppercase;letter-spacing:.4px;
+  animation:yellowScroll 20s linear infinite
+}
+@keyframes yellowScroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.yellow-live-badge{
+  flex-shrink:0;display:flex;align-items:center;gap:6px;
+  background:#1a1a1a;color:#ffd400;font-size:11px;font-weight:900;
+  padding:5px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:.4px
+}
+.yellow-dot{width:9px;height:9px;border-radius:50%;background:#ffd400;flex-shrink:0;animation:yellowBlink 1s steps(1,end) infinite}
+@keyframes yellowBlink{0%,49%{opacity:1}50%,100%{opacity:.15}}
+
+/* Secção preta no final do site: notícias que rodam a cada 30s */
+.black-news-section{background:#000;padding:22px 14px 30px}
+.black-news-head{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+.black-news-head .tag{color:#ff3b4e;font-size:12px;font-weight:900;letter-spacing:.5px}
+.black-news-head h2{color:#fff;font-size:18px;font-weight:900;margin:0;flex:1}
+.black-news-live{display:flex;align-items:center;gap:6px;color:#ffd400;font-size:10.5px;font-weight:800;letter-spacing:.3px;text-transform:uppercase}
+.black-news-row{display:flex;gap:14px;overflow-x:auto;padding-bottom:8px;-webkit-overflow-scrolling:touch}
+.black-news-card{flex:0 0 220px;display:block;color:#fff;scroll-snap-align:start}
+.black-news-row{scroll-snap-type:x proximity}
+.black-news-card .thumb{width:100%;aspect-ratio:16/10;border-radius:8px;overflow:hidden;background:#141414}
+.black-news-card .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.black-news-card .cat{display:block;color:#ff6b7a;font-size:10.5px;font-weight:800;margin:8px 0 4px;letter-spacing:.3px}
+.black-news-card h3{font-size:14px;line-height:1.3;margin:0;font-weight:800}
+.black-news-more{display:inline-block;margin-top:14px;color:#ffd400;font-weight:900;font-size:13px;letter-spacing:.3px}
+
+/* Zona verde: da Classificação até à faixa amarela */
+.class-green-zone{
+  background:linear-gradient(180deg,rgba(0,200,120,.14),rgba(0,140,80,.06));
+  border:1px solid rgba(0,200,120,.4);
+  border-radius:12px;
+  padding:14px;
+  margin-top:18px;
+}
+.class-green-zone .sec.dark{margin-top:0 !important}
+
+/* BIG POST (post de destaque, imagem empresarial) */
+.big-post{position:relative;display:block;overflow:hidden;border-radius:10px;margin-top:18px;min-height:230px;background:#111;border:3px solid #00c868;box-shadow:0 0 0 1px rgba(0,200,104,.3),0 0 18px rgba(0,200,104,.4)}
+.big-post img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .4s}
+.big-post:hover img{transform:scale(1.04)}
+.big-post-shade{position:relative;z-index:2;min-height:230px;display:flex;flex-direction:column;justify-content:flex-end;padding:16px 14px;background:linear-gradient(180deg,transparent 25%,rgba(0,0,0,.92))}
+.big-post-shade .tag{color:#ffb4c0;font-size:11px;font-weight:800;letter-spacing:.4px}
+.big-post-shade h2{color:#fff;font-size:19px;line-height:1.28;font-weight:900;margin-top:6px}
+.big-post-shade p{color:#ddd;font-size:12.5px;margin-top:6px;max-width:40ch}
+
+/* FEATURE */
+.feature{position:relative;display:block;overflow:hidden;background:#111;min-height:260px;margin-bottom:4px}
+#feature-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;min-height:260px;transition:opacity .4s}
+.feature .shade{
+  position:relative;z-index:2;min-height:260px;
+  display:flex;flex-direction:column;justify-content:flex-end;
+  padding:18px 14px;background:linear-gradient(180deg,transparent 30%,rgba(0,0,0,.92))
+}
+.feature .tag{color:#ffb4c0;font-size:11px;font-weight:800;letter-spacing:.4px}
+.feature h1{color:#fff;font-size:22px;line-height:1.2;font-weight:900;margin-top:6px;max-width:34rem}
+@media(min-width:700px){
+  .feature,#feature-img,.feature .shade{min-height:400px}
+  .feature h1{font-size:32px}
+}
+
+/* TAGS // */
+.tag{font-size:11px;font-weight:800;color:var(--red);text-transform:uppercase;letter-spacing:.2px}
+.tag::before{content:"// "}
+.tag::after{content:" //"}
+
+/* SECTION HEADERS A Bola style */
+.sec{
+  display:flex;align-items:center;gap:10px;
+  margin:22px 0 12px;font-size:18px;font-weight:900;text-transform:uppercase;letter-spacing:-.3px
+}
+.sec .slash{width:8px;height:20px;background:var(--red);transform:skewX(-18deg);flex-shrink:0}
+.sec .bars{flex:1;height:12px;background:repeating-linear-gradient(-45deg,var(--red) 0 6px,transparent 6px 12px);opacity:.9}
+.sec.purple .bars{background:repeating-linear-gradient(-45deg,#7b5bb8 0 6px,transparent 6px 12px)}
+.sec.dark{background:var(--black);color:#fff;padding:9px 12px;margin:16px 0 0;font-size:13px;letter-spacing:.4px}
+.sec.dark .slash,.sec.dark .bars{display:none}
+
+/* NEWS LIST */
+.list{background:#fff}
+.list a{
+  display:grid;grid-template-columns:96px 1fr;gap:12px;
+  padding:12px 0;border-bottom:1px solid var(--line);align-items:center
+}
+.list a:last-child{border-bottom:0}
+.list .thumb{width:96px;height:72px;object-fit:cover;border-radius:2px}
+.list h3{font-size:15px;font-weight:700;line-height:1.3;color:#111}
+.list .meta{font-size:12px;color:var(--muted);margin-top:4px}
+
+/* GRID 2 */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid2 a{display:block}
+.grid2 img{width:100%;height:120px;object-fit:cover}
+.grid2 .pad{padding:8px 2px 4px}
+.grid2 h3{font-size:14px;font-weight:800;line-height:1.25}
+
+/* OPINIÃO */
+.opin-row{display:flex;gap:12px;overflow-x:auto;padding-bottom:6px;scroll-snap-type:x mandatory}
+.opin-card{
+  flex:0 0 180px;scroll-snap-align:start;background:#f3f3f3;
+  border-bottom:4px solid var(--red);overflow:hidden
+}
+.opin-photo{
+  height:150px;background:linear-gradient(135deg,#f5c518 0%,#e8a800 50%,#f5c518 100%);
+  display:grid;place-items:end center;overflow:hidden;position:relative
+}
+.opin-photo img{width:100%;height:150px;object-fit:cover;object-position:center top;mix-blend-mode:multiply;opacity:.95}
+.opin-card .pad{padding:10px}
+.opin-card .name{display:inline-block;background:#111;color:#fff;font-size:10px;font-weight:800;padding:3px 6px;margin:4px 0;text-transform:uppercase}
+.opin-card h3{font-size:13px;font-weight:800;line-height:1.25}
+
+/* EDIÇÃO */
+.ed-row{display:flex;gap:14px;overflow-x:auto;padding:4px 0 8px}
+.ed-card{flex:0 0 140px;text-align:center}
+.ed-frame{background:#ebebeb;border-radius:14px;padding:10px 8px 12px;border:1px solid #ddd}
+.ed-frame img{width:100%;height:180px;object-fit:cover;border-radius:3px;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.ed-card .date{margin-top:8px;font-size:10px;font-weight:800;color:var(--red);text-transform:uppercase}
+
+/* ÚLTIMAS */
+.ultimas h2{font-size:18px;font-weight:900;margin:20px 0 10px}
+.ultimas li{list-style:none;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px;display:flex;gap:10px;align-items:flex-start}
+.ultimas .t{color:var(--red);font-weight:800;min-width:42px;font-size:13px}
+.ultimas .t::before{content:"/ ";font-weight:900}
+
+/* TABELA */
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:var(--black);color:#fff;text-align:left;padding:9px 10px;font-size:12px}
+td{padding:9px 10px;border-bottom:1px solid var(--line)}
+.pts{color:var(--red);font-weight:800}
+
+/* FOOTER */
+.footer{background:var(--black);color:#999;padding:28px 12px 20px;margin-top:28px;font-size:13px}
+.footer-grid{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(min-width:700px){.footer-grid{grid-template-columns:2fr 1fr 1fr 1fr}}
+.footer h4{color:#fff;font-size:12px;text-transform:uppercase;margin-bottom:8px;letter-spacing:.5px}
+.footer a{display:block;color:#aaa;margin:5px 0}
+.footer a:hover{color:#fff}
+.footer-bottom{max-width:1100px;margin:18px auto 0;padding-top:14px;border-top:1px solid #333;font-size:11px;color:#666;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+
+/* ARTICLE */
+#home{display:block}
+#art{display:none;min-height:100vh;background:#fff}
+#art.on{display:block}
+#home.off{display:none}
+#maisnoticias{display:none;min-height:100vh;background:#000}
+#maisnoticias.on{display:block}
+
+/* Página "Mais Notícias": grelha de posts com imagens grandes */
+.mais-wrap{max-width:1100px;margin:0 auto;padding:12px 14px 48px;background:#000}
+.mais-wrap .sec.dark{background:#1a1a1a}
+.mais-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px;margin-top:16px}
+.mais-card{display:block;border:1px solid #2a2a2a;border-radius:8px;overflow:hidden;background:#111;transition:box-shadow .2s,transform .2s}
+.mais-card:hover{box-shadow:0 6px 18px rgba(255,255,255,.08);transform:translateY(-2px)}
+.mais-card .thumb{width:100%;aspect-ratio:16/10;object-fit:cover;display:block;background:#1a1a1a}
+.mais-card .pad{padding:10px 12px 14px}
+.mais-card .tag{color:#ff6b7a;font-size:11px;font-weight:800;letter-spacing:.3px}
+.mais-card h3{font-size:15px;font-weight:800;line-height:1.32;margin:6px 0 4px;color:#fff}
+.mais-card .meta{font-size:12px;color:#999}
+.art{max-width:720px;margin:0 auto;padding:12px 14px 48px}
+.back{display:inline-block;background:var(--red);color:#fff;font-weight:700;padding:10px 14px;margin:6px 0 14px}
+.art .cover{width:100%;height:220px;object-fit:cover}
+.art h1{font-size:24px;font-weight:900;margin:12px 0 8px;line-height:1.25}
+.art .meta{color:var(--muted);font-size:13px;margin-bottom:16px}
+.art .body{font-size:16px;line-height:1.7}
+.art .body p{margin-bottom:14px}
+
+@media(max-width:799px){
+  .nav{display:none}
+  .nav.open{display:flex;flex-direction:column;position:absolute;left:0;right:0;top:52px;background:var(--red);padding:8px;z-index:40}
+  .btn-in{display:none}
+}
+@media(min-width:900px){
+  .layout{display:grid;grid-template-columns:1fr 300px;gap:24px}
+}
+
+/* VÍDEOS */
+.videos-block{margin:18px 0 8px}
+.video-main{
+  position:relative;background:#111;border-radius:4px;overflow:hidden;
+  aspect-ratio:16/9;width:100%
+}
+.video-main iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.video-caption{
+  background:#111;color:#fff;padding:12px 14px
+}
+.video-caption .tag{color:#ffb4c0}
+.video-caption h3{font-size:16px;font-weight:800;margin-top:4px;line-height:1.3}
+.video-row{display:flex;gap:10px;overflow-x:auto;padding:10px 0 4px}
+.video-mini{
+  flex:0 0 160px;background:#111;border-radius:4px;overflow:hidden;position:relative
+}
+.video-mini img{width:100%;height:90px;object-fit:cover;opacity:.85}
+.video-mini .play{
+  position:absolute;inset:0;display:grid;place-items:center;
+  color:#fff;font-size:28px;text-shadow:0 2px 8px #000
+}
+.video-mini p{color:#fff;font-size:12px;font-weight:700;padding:8px;line-height:1.25}
+
+
+/* Mini iframes a rolar */
+.mini-iframe-wrap{
+  overflow:hidden;width:100%;margin:10px 0 6px;
+  background:#0a0a0a;border-radius:4px;padding:8px 0;
+}
+.mini-iframe-track{
+  display:flex;gap:10px;width:max-content;
+  animation:scrollMini 45s linear infinite;
+}
+.mini-iframe-track:hover{animation-play-state:paused}
+.mini-iframe{
+  flex:0 0 200px;width:200px;height:112px;
+  border:0;border-radius:4px;background:#222;
+  pointer-events:auto;
+}
+@keyframes scrollMini{
+  from{transform:translateX(0)}
+  to{transform:translateX(-50%)}
+}
+@media(max-width:480px){
+  .mini-iframe{flex:0 0 160px;width:160px;height:90px}
+}
+
+
+/* Edição impressa — poste grande */
+.ed-hero{
+  position:relative;border-radius:8px;overflow:hidden;
+  margin-bottom:14px;background:#111;min-height:280px
+}
+.ed-hero img{
+  width:100%;height:100%;min-height:280px;object-fit:cover;
+  object-position:center top;display:block
+}
+.ed-hero .ed-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(180deg,transparent 35%,rgba(0,0,0,.9));
+  display:flex;flex-direction:column;justify-content:flex-end;
+  padding:16px 14px;color:#fff
+}
+.ed-hero .ed-badge{
+  display:inline-block;background:var(--red);color:#fff;
+  font-size:10px;font-weight:800;padding:4px 8px;text-transform:uppercase;
+  width:fit-content;margin-bottom:6px;letter-spacing:.4px
+}
+.ed-hero h2{font-size:20px;font-weight:900;line-height:1.2;margin-bottom:4px}
+.ed-hero p{font-size:13px;opacity:.9;line-height:1.35}
+@media(min-width:700px){
+  .ed-hero,.ed-hero img{min-height:360px}
+  .ed-hero h2{font-size:26px}
+}
+.ed-row{display:flex;gap:12px;overflow-x:auto;padding:4px 0 8px}
+.ed-card{flex:0 0 148px;text-align:center}
+.ed-frame{
+  background:linear-gradient(180deg,#f0f0f0,#e2e2e2);
+  border-radius:14px;padding:10px 8px 12px;border:1px solid #d8d8d8;
+  box-shadow:0 4px 14px rgba(0,0,0,.08)
+}
+.ed-frame img{
+  width:100%;height:190px;object-fit:cover;border-radius:4px;
+  box-shadow:0 2px 8px rgba(0,0,0,.15)
+}
+.ed-card .date{margin-top:8px;font-size:10px;font-weight:800;color:var(--red);text-transform:uppercase}
+
+
+/* Edição — live / recente */
+.ed-hero{position:relative}
+.ed-live-bar{
+  position:absolute;top:10px;left:10px;right:10px;z-index:3;
+  display:flex;align-items:center;gap:8px;
+  background:rgba(0,0,0,.55);backdrop-filter:blur(4px);
+  border-radius:6px;padding:6px 10px;overflow:hidden
+}
+.ed-dot{
+  width:10px;height:10px;border-radius:50%;background:#00e676;
+  box-shadow:0 0 0 0 rgba(0,230,118,.7);
+  animation:edPulse 1.2s ease-out infinite;flex-shrink:0
+}
+@keyframes edPulse{
+  0%{box-shadow:0 0 0 0 rgba(0,230,118,.7);opacity:1}
+  70%{box-shadow:0 0 0 10px rgba(0,230,118,0);opacity:.85}
+  100%{box-shadow:0 0 0 0 rgba(0,230,118,0);opacity:1}
+}
+.ed-marquee{
+  flex:1;overflow:hidden;white-space:nowrap;mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)
+}
+.ed-marquee span{
+  display:inline-block;color:#00e676;font-size:12px;font-weight:800;
+  letter-spacing:.3px;text-transform:uppercase;
+  animation:edScroll 18s linear infinite
+}
+@keyframes edScroll{
+  from{transform:translateX(0)}
+  to{transform:translateX(-50%)}
+}
+.ed-ticks{
+  position:absolute;top:52px;left:12px;z-index:3;
+  display:flex;flex-direction:column;gap:5px
+}
+.ed-tick{
+  width:4px;height:14px;background:#00e676;border-radius:2px;
+  opacity:.95;box-shadow:0 0 6px rgba(0,230,118,.6)
+}
+.ed-tick:nth-child(2){opacity:.75;height:11px}
+.ed-tick:nth-child(3){opacity:.55;height:8px}
+.ed-tick:nth-child(4){opacity:.4;height:6px}
+.ed-recent{
+  position:absolute;bottom:12px;right:12px;z-index:3;
+  display:flex;align-items:center;gap:6px;
+  background:rgba(0,0,0,.6);color:#00e676;
+  font-size:11px;font-weight:800;padding:5px 10px;border-radius:20px;
+  text-transform:uppercase;letter-spacing:.4px
+}
+.ed-recent .ed-dot{width:8px;height:8px}
+
+
+.mambas-hero{position:relative;border-radius:8px;overflow:hidden;margin:12px 0 18px;background:#111;min-height:280px;display:block}
+.mambas-hero img{width:100%;height:100%;min-height:280px;object-fit:cover;object-position:center top;display:block}
+.mambas-hero .ed-overlay{
+  position:absolute;inset:0;z-index:2;
+  background:linear-gradient(180deg,transparent 35%,rgba(0,0,0,.9));
+  display:flex;flex-direction:column;justify-content:flex-end;
+  padding:16px 14px;color:#fff
+}
+.mambas-hero .ed-overlay h2{font-size:20px;font-weight:900;line-height:1.2;margin-bottom:4px}
+.mambas-hero .ed-overlay p{font-size:13px;opacity:.9}
+@media(min-width:700px){
+  .mambas-hero,.mambas-hero img{min-height:340px}
+  .mambas-hero .ed-overlay h2{font-size:24px}
+}
+
+
+/* Vídeo grande África */
+.africa-video{
+  position:relative;margin:14px 0 20px;border-radius:8px;overflow:hidden;background:#111
+}
+.africa-video .vid-frame{
+  position:relative;width:100%;aspect-ratio:16/9;background:#000
+}
+.africa-video iframe{
+  position:absolute;inset:0;width:100%;height:100%;border:0
+}
+.africa-video .ed-live-bar{top:8px}
+.africa-video .vid-foot{
+  position:relative;background:#0a0a0a;padding:10px 12px;
+  display:flex;align-items:center;gap:8px;overflow:hidden
+}
+.africa-video .vid-foot .ed-dot{flex-shrink:0}
+.africa-video .vid-marquee{
+  flex:1;overflow:hidden;white-space:nowrap;
+  mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)
+}
+.africa-video .vid-marquee span{
+  display:inline-block;color:#00e676;font-size:12px;font-weight:800;
+  text-transform:uppercase;letter-spacing:.35px;
+  animation:edScroll 20s linear infinite
+}
+.africa-video .ed-ticks{top:48px}
+
+
+/* Faixa vermelha rolante + vídeo classificação */
+.red-marquee-wrap{
+  background:#fff;border:1px solid #eee;border-radius:4px;
+  margin:12px 0 10px;padding:8px 0;overflow:hidden
+}
+.red-marquee{
+  white-space:nowrap;overflow:hidden
+}
+.red-marquee span{
+  display:inline-block;color:var(--red);font-size:13px;font-weight:900;
+  text-transform:uppercase;letter-spacing:.4px;
+  animation:redScroll 22s linear infinite
+}
+@keyframes redScroll{
+  from{transform:translateX(0)}
+  to{transform:translateX(-50%)}
+}
+.class-video{
+  position:relative;margin:0 0 14px;border-radius:8px;overflow:hidden;background:#111
+}
+.class-video .vid-frame{position:relative;width:100%;aspect-ratio:16/9;background:#000}
+.class-video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.class-video .vid-foot{
+  background:#0a0a0a;padding:8px 10px;display:flex;align-items:center;gap:8px;overflow:hidden
+}
+.class-video .vid-foot span.roll{
+  display:inline-block;color:#00e676;font-size:11px;font-weight:800;
+  white-space:nowrap;animation:redScroll 18s linear infinite;text-transform:uppercase
+}
+
+.bb-hero{
+  position:relative;display:block;border-radius:8px;overflow:hidden;
+  margin:12px 0 16px;background:#111;min-height:260px
+}
+.bb-hero img{width:100%;min-height:260px;object-fit:cover;object-position:center top;display:block}
+.bb-hero .ed-overlay{
+  position:absolute;inset:0;z-index:2;
+  background:linear-gradient(180deg,transparent 30%,rgba(0,0,0,.92));
+  display:flex;flex-direction:column;justify-content:flex-end;
+  padding:14px;color:#fff
+}
+.bb-hero .ed-overlay h2{font-size:18px;font-weight:900;line-height:1.2}
+.bb-hero .ed-overlay p{font-size:12px;opacity:.9;margin-top:4px}
+@media(min-width:700px){
+  .bb-hero,.bb-hero img{min-height:320px}
+  .bb-hero .ed-overlay h2{font-size:22px}
+}
+
+
+/* EM DESTAQUE — laranja puro */
+#destaque.sec.dark,
+.sec.dark#destaque{
+  background:#FF6600 !important;
+  color:#fff !important;
+  border:none;
+}
+
+
+
+
+@media(min-width:700px){
+  
+}
+
+
+
+
+
+
+
+
+
+
+/* Faixa + poste: laranja contínuo nos 4 cantos */
+.orange-strip{
+  width:100%;
+  background:#FF6600;
+  display:block;
+  line-height:0;
+  margin:0;
+  padding:0;
+  border:0;
+}
+.orange-strip img{
+  width:100%;
+  height:auto;
+  display:block;
+}
+.orange-frame{
+  background:#FF6600 !important;
+  padding:8px !important;
+  margin:0 0 14px !important;
+  border:0 !important;
+  border-radius:0 !important;
+  box-sizing:border-box;
+}
+.orange-frame .feature{
+  margin:0 !important;
+  border-radius:0 !important;
+  border:0 !important;
+  outline:none !important;
+  box-shadow:none !important;
+  display:block;
+  overflow:hidden;
+  background:#111;
+}
+.orange-frame .feature img{
+  display:block;width:100%;vertical-align:top;
+}
+.orange-frame #destaque.sec.dark,
+.orange-frame .sec.dark#destaque{
+  margin:0 !important;
+  border-radius:0 !important;
+  background:#FF6600 !important;
+  color:#fff !important;
+}
+.orange-frame .list{
+  background:#fff !important;
+  margin:0 !important;
+  border:0 !important;
+  /* laterais laranja via padding do frame */
+}
+/* remove gap between strip and frame */
+.orange-strip + .wrap,
+.orange-strip + main,
+main.wrap{
+  padding-top:0 !important;
+}
+.layout > div > .orange-frame{
+  margin-top:0 !important;
+}
+/* full-bleed orange sides on mobile */
+@media(max-width:720px){
+  .wrap{padding-left:0 !important;padding-right:0 !important}
+  .orange-frame{margin-left:0;margin-right:0}
+  .orange-strip{height:48px}
+}
+
+
+.orange-strip{margin-bottom:0 !important}
+main.wrap > .layout{padding-top:0}
+main.wrap > .orange-frame,
+.layout .orange-frame{margin-top:0 !important}
+
+</style>
+</head>
+<body>
+<div id="home">
+<header class="header">
+  <div class="header-row">
+    <button class="burger" id="burger" type="button" aria-label="Menu">☰</button>
+    <a href="#" class="logo" id="logo">MOZBOLA</a>
+    <nav class="nav" id="nav">
+      <a href="#inicio">Início</a>
+      <a href="#destaque">Nacional</a>
+      <a href="#mambas">Mambas</a>
+      <a href="#videos">Vídeos</a>
+      <a href="#opiniao">Opinião</a>
+      <a href="#ultimas">Últimas</a>
+    </nav>
+    <span class="btn-in">Entrar</span>
+  </div>
+</header>
+<div class="orange-strip"><img src="data:image/png;base64,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" alt="Betclic" loading="lazy"></div>
+
+<main class="wrap" id="inicio">
+  <div class="layout">
+    <div>
+      <div class="orange-frame">
+<a href="#" class="feature" data-i="0">
+        <img id="feature-img" src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=900&q=80" alt="">
+        <div class="shade">
+          <span class="tag" style="color:#ffb4c0">Mambas</span>
+          <h1>Mambas convocam 26 jogadores para o estágio em Maputo</h1>
+        </div>
+      </a>
+
+      <div class="sec dark" id="destaque">EM DESTAQUE</div>
+      <div class="list" id="list-destaque"></div>
+</div>
+
+      
+      <div class="sec" id="videos"><span class="slash"></span>Vídeos<span class="bars"></span></div>
+      <div class="videos-block">
+        <div class="video-main">
+          <iframe
+            src="https://www.youtube.com/embed/sRDuV81FijU?rel=0"
+            title="Vídeo futebol MOZBOLA"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen
+            loading="lazy"></iframe>
+        </div>
+        <div class="video-caption">
+          <div class="tag">Mambas</div>
+          <h3>Treino e intensidade: o ritmo das Mambas em Maputo</h3>
+        </div>
+        
+        <div class="mini-iframe-wrap">
+          <div class="mini-iframe-track">
+            <iframe class="mini-iframe" src="https://www.youtube.com/embed/sRDuV81FijU?rel=0&mute=1" title="Futebol" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><iframe class="mini-iframe" src="https://www.youtube.com/embed/bLzrK9H8XLc?rel=0&mute=1" title="Futebol" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><iframe class="mini-iframe" src="https://www.youtube.com/embed/yCqIxGhkWtM?rel=0&mute=1" title="Futebol" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><iframe class="mini-iframe" src="https://www.youtube.com/embed/VbpGBEADNKM?rel=0&mute=1" title="Futebol" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><iframe class="mini-iframe" src="https://www.youtube.com/embed/Wf2mROlyvsc?rel=0&mute=1" title="Futebol" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><iframe class="mini-iframe" src="https://www.youtube.com/embed/ujkBRg-upZY?rel=0&mute=1" title="Futebol" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><iframe class="mini-iframe" src="https://www.youtube.com/embed/ZufSx_dUvCM?rel=0&mute=1" title="Futebol" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <iframe class="mini-iframe" src="https://www.youtube.com/embed/sRDuV81FijU?rel=0&mute=1" title="Futebol" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><iframe class="mini-iframe" src="https://www.youtube.com/embed/bLzrK9H8XLc?rel=0&mute=1" title="Futebol" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><iframe class="mini-iframe" src="https://www.youtube.com/embed/yCqIxGhkWtM?rel=0&mute=1" title="Futebol" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><iframe class="mini-iframe" src="https://www.youtube.com/embed/VbpGBEADNKM?rel=0&mute=1" title="Futebol" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><iframe class="mini-iframe" src="https://www.youtube.com/embed/Wf2mROlyvsc?rel=0&mute=1" title="Futebol" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><iframe class="mini-iframe" src="https://www.youtube.com/embed/ujkBRg-upZY?rel=0&mute=1" title="Futebol" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><iframe class="mini-iframe" src="https://www.youtube.com/embed/ZufSx_dUvCM?rel=0&mute=1" title="Futebol" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="sec" id="mocambola"><span class="slash"></span>Moçambola<span class="bars"></span></div>
+      <div class="list" id="list-liga"></div>
+
+      <a href="#" class="bb-hero ed-hero" data-i="1">
+        <img src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1200&q=85" alt="Black Bulls">
+        <div class="ed-live-bar">
+          <span class="ed-dot"></span>
+          <div class="ed-marquee"><span>BLACK BULLS · LÍDERES DA MOÇAMBOLA · 40 PONTOS · PLANTEL COMPLETO · AO VIVO · BLACK BULLS · LÍDERES DA MOÇAMBOLA · 40 PONTOS · PLANTEL COMPLETO · AO VIVO · </span></div>
+        </div>
+        <div class="ed-ticks"><span class="ed-tick"></span><span class="ed-tick"></span><span class="ed-tick"></span><span class="ed-tick"></span></div>
+        <div class="ed-overlay">
+          <span class="ed-badge">Black Bulls</span>
+          <h2>Isolados no topo da tabela da Moçambola</h2>
+          <p>Vitória fora · liderança reforçada · foco na próxima jornada</p>
+        </div>
+        <div class="ed-recent"><span class="ed-dot"></span> Recente</div>
+      </a>
+
+
+      <div class="sec" id="mambas"><span class="slash"></span>Mambas<span class="bars"></span></div>
+      
+      <a href="#" class="bb-hero ed-hero" data-i="0" style="margin-top:8px">
+        <img src="https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=1200&q=85" alt="Mambas lista">
+        <div class="ed-live-bar">
+          <span class="ed-dot"></span>
+          <div class="ed-marquee"><span>LISTA MAMBAS · 26 JOGADORES · MAPUTO · DIÁSPORA · TREINOS · RECENTE · LISTA MAMBAS · 26 JOGADORES · MAPUTO · DIÁSPORA · TREINOS · RECENTE · </span></div>
+        </div>
+        <div class="ed-ticks"><span class="ed-tick"></span><span class="ed-tick"></span><span class="ed-tick"></span><span class="ed-tick"></span></div>
+        <div class="ed-overlay">
+          <span class="ed-badge">Mambas</span>
+          <h2>Lista oficial: Moçambola e diáspora juntos</h2>
+          <p>Convocatória completa para o estágio em Maputo</p>
+        </div>
+        <div class="ed-recent"><span class="ed-dot"></span> Recente</div>
+      </a>
+
+      <div class="list" id="list-mambas"></div>
+
+      <a href="#" class="mambas-hero ed-hero" data-i="0">
+        <img src="https://images.unsplash.com/photo-1489944440615-453fc2b6a9a9?w=1200&q=85" alt="Mambas">
+        <div class="ed-live-bar">
+          <span class="ed-dot" aria-hidden="true"></span>
+          <div class="ed-marquee"><span>MAMBAS · AO VIVO · ESTÁGIO EM MAPUTO · 26 CONVOCADOS · INTENSIDADE NOS TREINOS · LISTA COM DIÁSPORA · RECENTE · MAMBAS · AO VIVO · ESTÁGIO EM MAPUTO · 26 CONVOCADOS · INTENSIDADE NOS TREINOS · LISTA COM DIÁSPORA · RECENTE · </span></div>
+        </div>
+        <div class="ed-ticks" aria-hidden="true">
+          <span class="ed-tick"></span>
+          <span class="ed-tick"></span>
+          <span class="ed-tick"></span>
+          <span class="ed-tick"></span>
+        </div>
+        <div class="ed-overlay">
+          <span class="ed-badge">Mambas</span>
+          <h2>Seleção nacional em concentração total</h2>
+          <p>26 jogadores · dois treinos por dia · olho no próximo compromisso internacional</p>
+        </div>
+        <div class="ed-recent"><span class="ed-dot"></span> Recente</div>
+      </a>
+
+
+      <div class="sec" id="opiniao"><span class="slash"></span>Opinião</div>
+      <div class="opin-row" id="opin-row"></div>
+
+      
+      <div class="sec"><span class="slash"></span>Edição impressa</div>
+      <a href="#" class="ed-hero" data-i="0">
+        <img src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1200&q=85" alt="Capa MOZBOLA">
+        <div class="ed-live-bar">
+          <span class="ed-dot" aria-hidden="true"></span>
+          <div class="ed-marquee"><span>AO VIVO · EDIÇÃO DE HOJE · MAMBAS EM ESTÁGIO · BLACK BULLS NO TOPO · CLÁSSICO EM MAPUTO · CAPA RECENTE · AO VIVO · EDIÇÃO DE HOJE · MAMBAS EM ESTÁGIO · BLACK BULLS NO TOPO · CLÁSSICO EM MAPUTO · CAPA RECENTE · </span></div>
+        </div>
+        <div class="ed-ticks" aria-hidden="true">
+          <span class="ed-tick"></span>
+          <span class="ed-tick"></span>
+          <span class="ed-tick"></span>
+          <span class="ed-tick"></span>
+        </div>
+        <div class="ed-overlay">
+          <span class="ed-badge">Capa do dia</span>
+          <h2>MOZBOLA — 30 de setembro de 2026</h2>
+          <p>Mambas em estágio · Black Bulls isolados no topo · O clássico que para Maputo</p>
+        </div>
+        <div class="ed-recent"><span class="ed-dot"></span> Recente</div>
+      </a>
+      <div class="ed-row" id="ed-row"></div>
+
+
+      <div class="sec purple" id="africa"><span class="slash"></span>África &amp; Mundo<span class="bars"></span></div>
+      <div class="list" id="list-africa"></div>
+
+      <div class="africa-video ed-hero">
+        <div class="ed-live-bar">
+          <span class="ed-dot" aria-hidden="true"></span>
+          <div class="ed-marquee"><span>ÁFRICA &amp; MUNDO · DESTAQUE · FUTEBOL INTERNACIONAL · MAMBAS NA ROTA · DIÁSPORA · AO VIVO · ÁFRICA &amp; MUNDO · DESTAQUE · FUTEBOL INTERNACIONAL · MAMBAS NA ROTA · DIÁSPORA · AO VIVO · </span></div>
+        </div>
+        <div class="ed-ticks" aria-hidden="true">
+          <span class="ed-tick"></span>
+          <span class="ed-tick"></span>
+          <span class="ed-tick"></span>
+          <span class="ed-tick"></span>
+        </div>
+        <div class="vid-frame">
+          <iframe
+            src="https://www.youtube.com/embed/sRDuV81FijU?rel=0"
+            title="África e Mundo — futebol"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+            loading="lazy"></iframe>
+        </div>
+        <div class="vid-foot">
+          <span class="ed-dot" aria-hidden="true"></span>
+          <div class="vid-marquee"><span>RECENTE · HIGHLIGHTS · ÁFRICA · MUNDO · MOZBOLA · ASSISTA AGORA · RECENTE · HIGHLIGHTS · ÁFRICA · MUNDO · MOZBOLA · ASSISTA AGORA · </span></div>
+        </div>
+      </div>
+
+    </div>
+
+    <aside>
+      <div class="ultimas" id="ultimas">
+        <h2>Últimas</h2>
+        <ul id="ultimas-ul"></ul>
+      </div>
+      
+      <div class="red-marquee-wrap">
+        <div class="red-marquee"><span>MOÇAMBOLA · BLACK BULLS LÍDERES · 40 PONTOS · COSTA DO SOL 36 · FERROVIÁRIO 34 · MAXAQUENE 32 · LD MAPUTO 28 · CLASSIFICAÇÃO AO VIVO · MOÇAMBOLA · BLACK BULLS LÍDERES · 40 PONTOS · COSTA DO SOL 36 · FERROVIÁRIO 34 · MAXAQUENE 32 · LD MAPUTO 28 · CLASSIFICAÇÃO AO VIVO · </span></div>
+      </div>
+      <div class="class-video ed-hero">
+        <div class="ed-live-bar">
+          <span class="ed-dot"></span>
+          <div class="ed-marquee"><span>VÍDEO · TABELA · DESTAQUES DA JORNADA · BLACK BULLS · AO VIVO · VÍDEO · TABELA · DESTAQUES DA JORNADA · BLACK BULLS · AO VIVO · </span></div>
+        </div>
+        <div class="ed-ticks"><span class="ed-tick"></span><span class="ed-tick"></span><span class="ed-tick"></span><span class="ed-tick"></span></div>
+        <div class="vid-frame">
+          <iframe src="https://www.youtube.com/embed/bLzrK9H8XLc?rel=0" title="Classificação" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+        </div>
+        <div class="vid-foot">
+          <span class="ed-dot"></span>
+          <span class="roll">RECENTE · HIGHLIGHTS MOÇAMBOLA · BLACK BULLS NO TOPO · ASSISTA · RECENTE · HIGHLIGHTS MOÇAMBOLA · BLACK BULLS NO TOPO · ASSISTA · </span>
+        </div>
+      </div>
+
+      <div class="class-green-zone">
+        <div class="sec dark">Classificação</div>
+        <table>
+          <thead><tr><th>#</th><th>Equipa</th><th>Pts</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Black Bulls</td><td class="pts">40</td></tr>
+            <tr><td>2</td><td>Costa do Sol</td><td class="pts">36</td></tr>
+            <tr><td>3</td><td>Ferroviário Maputo</td><td class="pts">34</td></tr>
+            <tr><td>4</td><td>Maxaquene</td><td class="pts">32</td></tr>
+            <tr><td>5</td><td>LD Maputo</td><td class="pts">28</td></tr>
+          </tbody>
+        </table>
+
+        <a href="#" id="big-post-link" class="big-post">
+          <img id="big-post-img" src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=1200&q=85" alt="Reunião de gestão profissional no futebol moçambicano">
+          <div class="big-post-shade">
+            <div class="tag" id="big-post-tag">Negócios</div>
+            <h2 id="big-post-title">Moçambola em debate: patrocínios e gestão profissional ganham destaque fora de campo</h2>
+            <p id="big-post-desc">Clubes discutem contratos, direitos de transmissão e profissionalização da gestão desportiva.</p>
+          </div>
+        </a>
+
+        <div class="yellow-marquee-wrap">
+          <div class="yellow-marquee"><span id="yellow-marquee-text">ÚLTIMA HORA · SIGA A MOÇAMBOLA EM DIRETO · NOTÍCIAS ATUALIZADAS A CADA 24H · BLACK BULLS NA LIDERANÇA · ÚLTIMA HORA · SIGA A MOÇAMBOLA EM DIRETO · NOTÍCIAS ATUALIZADAS A CADA 24H · BLACK BULLS NA LIDERANÇA · </span></div>
+          <div class="yellow-live-badge"><span class="yellow-dot" aria-hidden="true"></span>AO VIVO</div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<section class="black-news-section" id="black-news-section">
+  <div class="black-news-head">
+    <span class="tag">// NOTÍCIAS //</span>
+    <h2>Últimas Atualizações</h2>
+    <span class="black-news-live"><span class="yellow-dot" aria-hidden="true"></span>ATUALIZA A CADA 30S</span>
+  </div>
+  <div class="black-news-row" id="black-news-row"></div>
+  <a href="#" id="black-news-more-link" class="black-news-more">VER MAIS &#10095;</a>
+</section>
+
+<footer class="footer">
+  <div class="footer-grid">
+    <div>
+      <h4>MOZBOLA</h4>
+      <p>O site do futebol moçambicano — Moçambola, Mambas e clubes nacionais.</p>
+    </div>
+    <div>
+      <h4>Secções</h4>
+      <a href="#destaque">Nacional</a>
+      <a href="#mambas">Mambas</a>
+      <a href="#opiniao">Opinião</a>
+      <a href="#africa">África</a>
+    </div>
+    <div>
+      <h4>Clubes</h4>
+      <a href="#destaque">Black Bulls</a>
+      <a href="#destaque">Costa do Sol</a>
+      <a href="#destaque">Ferroviário</a>
+      <a href="#destaque">Maxaquene</a>
+    </div>
+    <div>
+      <h4>Info</h4>
+      <a href="#inicio">Início</a>
+      <a href="#ultimas">Últimas</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 MOZBOLA</span>
+    <span id="news-updated">A carregar notícias…</span>
+  </div>
+</footer>
+</div>
+
+<div id="art">
+  <div class="art">
+    <button type="button" class="back" id="back1">← Voltar</button>
+    <img class="cover" id="a-img" alt="">
+    <div class="tag" id="a-tag" style="margin-top:12px"></div>
+    <h1 id="a-title"></h1>
+    <div class="meta" id="a-meta"></div>
+    <div class="body" id="a-body"></div>
+    <button type="button" class="back" id="back2">← Voltar</button>
+  </div>
+</div>
+
+<div id="maisnoticias">
+  <div class="mais-wrap">
+    <button type="button" class="back" id="back-mais">← Voltar</button>
+    <div class="sec dark" style="margin-top:10px">Mais Notícias</div>
+    <div class="mais-grid" id="mais-grid"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var IMGS = ["https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=900&q=80", "https://images.unsplash.com/photo-1553778263-73a83bab9b0c?w=900&q=80", "https://images.unsplash.com/photo-1517927033932-b3d18e61fb3a?w=900&q=80", "https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=900&q=80", "https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=900&q=80", "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=900&q=80", "https://images.unsplash.com/photo-1489944440615-453fc2b6a9a9?w=900&q=80", "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1200&q=85", "https://images.unsplash.com/photo-1566577739112-5180d4bf9390?w=900&q=80", "https://images.unsplash.com/photo-1543326727-cf6c39e8f84c?w=900&q=80"];
+  var PORTRAITS = ["https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&q=80", "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&q=80", "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&q=80", "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80"];
+
+  function corpo(t){
+    var f=[
+      "As Mambas preparam o ciclo competitivo com concentração em Maputo e atenção ao calendário internacional.",
+      "Na Moçambola, Black Bulls, Costa do Sol, Ferroviário de Maputo e Maxaquene definem a frente da tabela.",
+      "O selecionador valoriza jogadores em ritmo de competição e pediu intensidade nos treinos.",
+      "Os adeptos respondem quando há espetáculo, transparência e informação clara sobre as equipas.",
+      "A formação nos clubes alimenta o futuro das Mambas e a qualidade do campeonato nacional.",
+      "Cada clássico em Maputo eleva a temperatura: bilheteira, cânticos e rivalidade dentro das quatro linhas."
+    ];
+    var html="",n=0,i=0;
+    while(n<2300){
+      var p=f[i%f.length]+" Em «"+t+"», o MOZBOLA junta factos de jogo, contexto de plantel e impacto na tabela. ";
+      p+=f[(i+2)%f.length]+" O futebol moçambicano vive destes momentos de decisão.";
+      html+="<p>"+p+p+"</p>"; n+=p.length*2; i++; if(i>40) break;
+    }
+    return html;
+  }
+
+  function esc(s){
+    return String(s==null?'':s).replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+
+  var FALLBACK_NEWS=[
+    {cat:"Mambas",title:"Mambas convocam 26 jogadores para o estágio em Maputo",time:"20:15",img:IMGS[0]},
+    {cat:"Moçambola",title:"Black Bulls vencem e isolam-se no topo da tabela",time:"19:40",img:IMGS[1]},
+    {cat:"Nacional",title:"Costa do Sol reforça o ataque para a reta final",time:"18:55",img:IMGS[2]},
+    {cat:"Clássico",title:"Maxaquene e Ferroviário: o clássico que para Maputo",time:"18:10",img:IMGS[3]},
+    {cat:"Nacional",title:"Ferroviário promove três jogadores da formação",time:"17:30",img:IMGS[4]},
+    {cat:"Nacional",title:"LD Maputo apresenta novo treinador",time:"16:45",img:IMGS[5]},
+    {cat:"Mambas",title:"Selecionador pede intensidade nos treinos das Mambas",time:"15:20",img:IMGS[6]},
+    {cat:"Moçambola",title:"Black Bulls viajam com plantel quase completo",time:"14:05",img:IMGS[7]},
+    {cat:"Nacional",title:"Costa do Sol abre bilheteira antecipada aos sócios",time:"13:10",img:IMGS[8]},
+    {cat:"Mambas",title:"Lista das Mambas mistura Moçambola e diáspora",time:"12:00",img:IMGS[9]}
+  ];
+  FALLBACK_NEWS.forEach(function(n){ n.source="local"; n.body=corpo(n.title); });
+
+  /* =========================================================
+     CONFIG: INTEGRAÇÃO COM FONTES DE NOTÍCIAS (com fallback em cadeia)
+     Ordem de tentativa: 1) NewsAPI.org  2) NewsData.io  3) GNews.io
+     4) conteúdo de exemplo (FALLBACK_NEWS). As notícias são
+     cacheadas por 24h em localStorage — só se tenta de novo às
+     fontes externas quando a cache expira (ou a cada hora, caso a
+     aba fique aberta muito tempo).
+
+     AVISO IMPORTANTE: a chave da NewsAPI.org é do plano gratuito
+     "Developer", suportado oficialmente só em localhost — pedidos
+     feitos a partir de um site publicado podem ser bloqueados por
+     ela. A NewsData.io e a GNews.io costumam ser mais tolerantes a
+     uso a partir do browser, mas ambas também têm limites diários
+     no plano gratuito (200 créditos/dia e 100 pedidos/dia,
+     respetivamente) e podem devolver poucos ou nenhum resultado
+     para um tema tão específico como futebol moçambicano. Por isso
+     todas passam por esta cadeia, e o conteúdo de exemplo garante
+     que a página nunca fica vazia. Ver README para detalhes.
+     ========================================================= */
+  var NEWSAPI_KEY = "906979871b13446d931605b63beed327"; // CONFIG: chave NewsAPI.org
+  var NEWSAPI_QUERY = '"Moçambola" OR "Mambas" OR "futebol moçambicano" OR "Mozambique football"';
+
+  var NEWSDATA_KEY = "pub_70f1a1e61bfe4ea99e7bdc72f1524e2c"; // CONFIG: chave NewsData.io
+  var NEWSDATA_QINTITLE = "Moçambola,Mambas,futebol,football"; // CONFIG: termos de pesquisa no título
+  var NEWSDATA_COUNTRY = "mz,pt,br";   // CONFIG: códigos de país (ISO2)
+  var NEWSDATA_LANGUAGE = "pt,en";     // CONFIG: idiomas
+  var NEWSDATA_CATEGORY = "sports";    // CONFIG: categoria (apenas uma válida por pedido no plano gratuito)
+
+  var NEWS_CACHE_KEY = "mozbolaNewsCache_v2";
+  var NEWS_TTL_MS = 24*60*60*1000; // 24 horas
+
+  function readNewsCache(){
+    try{
+      var raw=localStorage.getItem(NEWS_CACHE_KEY);
+      if(!raw) return null;
+      var obj=JSON.parse(raw);
+      if(!obj || !obj.timestamp || !obj.articles) return null;
+      if(Date.now()-obj.timestamp > NEWS_TTL_MS) return null;
+      return obj;
+    }catch(e){ return null; }
+  }
+  function writeNewsCache(articles, provider){
+    try{ localStorage.setItem(NEWS_CACHE_KEY, JSON.stringify({timestamp:Date.now(), articles:articles, provider:provider})); }catch(e){ /* localStorage indisponível */ }
+  }
+  function timeFromISO(iso){
+    try{
+      var d=new Date(iso);
+      var hh=String(d.getHours()).padStart(2,"0");
+      var mm=String(d.getMinutes()).padStart(2,"0");
+      return hh+":"+mm;
+    }catch(e){ return "--:--"; }
+  }
+  function timeFromNewsDataDate(pubDate){
+    // formato típico da NewsData.io: "YYYY-MM-DD HH:MM:SS" (UTC)
+    try{
+      var hm=String(pubDate).split(" ")[1].split(":");
+      return hm[0]+":"+hm[1];
+    }catch(e){ return "--:--"; }
+  }
+  function categorize(title, desc){
+    var t=(title+" "+(desc||"")).toLowerCase();
+    if(t.indexOf("patrocín")>-1 || t.indexOf("patrocin")>-1 || t.indexOf("contrato")>-1 ||
+       t.indexOf("direitos de transmiss")>-1 || t.indexOf("negóci")>-1 || t.indexOf("negoci")>-1 ||
+       t.indexOf("investimento")>-1 || t.indexOf("parceria")>-1) return "Negócios";
+    if(t.indexOf("moçambola")>-1 || t.indexOf("mocambola")>-1) return "Moçambola";
+    if(t.indexOf("mambas")>-1) return "Mambas";
+    if(t.indexOf("áfrica")>-1 || t.indexOf("africa")>-1) return "África";
+    return "Notícias";
+  }
+
+  function mapNewsApiArticles(list){
+    return (list||[]).map(function(a, idx){
+      return {
+        source: "api",
+        cat: categorize(a.title||"", a.description||""),
+        title: a.title || "Notícia sem título",
+        time: timeFromISO(a.publishedAt),
+        img: a.urlToImage || IMGS[idx % IMGS.length],
+        desc: a.description || "",
+        url: a.url || "#",
+        sourceName: (a.source && a.source.name) || "fonte externa"
+      };
+    }).filter(function(n){ return n.title && n.title!=="[Removed]"; });
+  }
+  async function fetchFromNewsAPI(){
+    var endpoint="https://newsapi.org/v2/everything?q="+encodeURIComponent(NEWSAPI_QUERY)+"&language=pt&sortBy=publishedAt&pageSize=20&apiKey="+NEWSAPI_KEY;
+    var res=await fetch(endpoint);
+    if(!res.ok) throw new Error("NewsAPI HTTP "+res.status+" (plano gratuito só é suportado em localhost)");
+    var data=await res.json();
+    if(data.status!=="ok") throw new Error("NewsAPI: "+(data.message||data.status));
+    var mapped=mapNewsApiArticles(data.articles);
+    if(mapped.length<4) throw new Error("NewsAPI devolveu poucos resultados relevantes para este tema");
+    return mapped;
+  }
+
+  function mapNewsDataArticles(list){
+    return (list||[]).map(function(a, idx){
+      return {
+        source: "api",
+        cat: categorize(a.title||"", a.description||""),
+        title: a.title || "Notícia sem título",
+        time: timeFromNewsDataDate(a.pubDate),
+        img: a.image_url || IMGS[idx % IMGS.length],
+        desc: a.description || "",
+        url: a.link || "#",
+        sourceName: a.source_name || a.source_id || "fonte externa"
+      };
+    }).filter(function(n){ return n.title; });
+  }
+  async function fetchFromNewsData(){
+    var endpoint="https://newsdata.io/api/1/latest?apikey="+NEWSDATA_KEY
+      +"&qInTitle="+encodeURIComponent(NEWSDATA_QINTITLE)
+      +"&country="+encodeURIComponent(NEWSDATA_COUNTRY)
+      +"&language="+encodeURIComponent(NEWSDATA_LANGUAGE)
+      +"&category="+encodeURIComponent(NEWSDATA_CATEGORY);
+    var res=await fetch(endpoint);
+    if(!res.ok) throw new Error("NewsData.io HTTP "+res.status);
+    var data=await res.json();
+    if(data.status!=="success") throw new Error("NewsData.io: "+(data.results && data.results.message || data.message || data.status));
+    var mapped=mapNewsDataArticles(data.results);
+    if(mapped.length<4) throw new Error("NewsData.io devolveu poucos resultados relevantes para este tema");
+    return mapped;
+  }
+
+  // CONFIG: GNews.io
+  var GNEWS_KEY = "3baa6a259e1a9db3718d410229abae4f"; // CONFIG: chave GNews.io
+  var GNEWS_QUERY = "Moçambola OR Mambas OR \"futebol moçambicano\""; // CONFIG: termos de pesquisa
+  var GNEWS_LANG = "pt";     // CONFIG: idioma
+  var GNEWS_COUNTRY = "mz";  // CONFIG: país (o plano gratuito só aceita um de cada vez)
+
+  function mapGNewsArticles(list){
+    return (list||[]).map(function(a, idx){
+      return {
+        source: "api",
+        cat: categorize(a.title||"", a.description||""),
+        title: a.title || "Notícia sem título",
+        time: timeFromISO(a.publishedAt),
+        img: a.image || IMGS[idx % IMGS.length],
+        desc: a.description || "",
+        url: a.url || "#",
+        sourceName: (a.source && a.source.name) || "fonte externa"
+      };
+    }).filter(function(n){ return n.title; });
+  }
+  async function fetchFromGNews(){
+    var endpoint="https://gnews.io/api/v4/search?q="+encodeURIComponent(GNEWS_QUERY)
+      +"&lang="+GNEWS_LANG+"&country="+GNEWS_COUNTRY+"&max=10&apikey="+GNEWS_KEY;
+    var res=await fetch(endpoint);
+    if(!res.ok) throw new Error("GNews HTTP "+res.status);
+    var data=await res.json();
+    if(!data.articles) throw new Error("GNews: "+(data.errors ? JSON.stringify(data.errors) : "resposta inesperada"));
+    var mapped=mapGNewsArticles(data.articles);
+    if(mapped.length<4) throw new Error("GNews devolveu poucos resultados relevantes para este tema");
+    return mapped;
+  }
+
+  /* =========================================================
+     CONFIG: ORDEM DAS FONTES DE NOTÍCIAS
+     Para adicionar mais uma fonte no futuro (Currents, Mediastack,
+     etc.): escrever uma função fetchFromX() seguindo o mesmo padrão
+     das acima (devolve um array de artigos no formato comum, ou
+     lança um erro), e acrescentar {name:"X", fetch:fetchFromX} a
+     este array — não é preciso tocar em mais nada.
+     ========================================================= */
+  var NEWS_PROVIDERS = [
+    { name: "NewsAPI.org",  fetch: fetchFromNewsAPI },
+    { name: "NewsData.io",  fetch: fetchFromNewsData },
+    { name: "GNews.io",     fetch: fetchFromGNews }
+  ];
+
+  var NEWS = FALLBACK_NEWS; // valor inicial — garante que a página nunca fica vazia
+
+  function row(n,i){
+    return '<a href="#" data-i="'+i+'"><img class="thumb" src="'+esc(n.img)+'" alt="" loading="lazy"><div><div class="tag">'+esc(n.cat)+'</div><h3>'+esc(n.title)+'</h3><div class="meta">'+esc(n.time)+'</div></div></a>';
+  }
+  function fill(id, idxs){
+    var el=document.getElementById(id);
+    if(!el) return;
+    idxs.forEach(function(i){ el.innerHTML += row(NEWS[i],i); });
+  }
+  function pick(start,count){
+    var out=[]; if(!NEWS.length) return out;
+    for(var k=0;k<count;k++){ out.push((start+k)%NEWS.length); }
+    return out;
+  }
+
+  var OP=[
+    {name:"Análise MOZBOLA",title:"Porque a liderança dos Black Bulls ainda não é título",img:PORTRAITS[0]},
+    {name:"Crónica Maputo",title:"O clássico Ferroviário–Maxaquene e o que diz do nosso futebol",img:PORTRAITS[1]},
+    {name:"Editorial",title:"Mambas: entre a ambição continental e a realidade da agenda",img:PORTRAITS[2]},
+    {name:"Formação",title:"Academias moçambicanas: o caminho mais sustentável",img:PORTRAITS[3]}
+  ];
+  var ED_COVERS=["https://images.unsplash.com/photo-1553778263-73a83bab9b0c?w=600&q=85","https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=600&q=85","https://images.unsplash.com/photo-1517927033932-b3d18e61fb3a?w=600&q=85","https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=600&q=85","https://images.unsplash.com/photo-1489944440615-453fc2b6a9a9?w=600&q=85","https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=600&q=85"];
+  var ED_DATES=["30 de setembro de 2026","29 de setembro de 2026","28 de setembro de 2026","27 de setembro de 2026","26 de setembro de 2026","25 de setembro de 2026"];
+
+  function renderNewsUI(){
+    ["list-destaque","list-liga","list-mambas","list-africa","ultimas-ul","opin-row","ed-row"].forEach(function(id){
+      var el=document.getElementById(id); if(el) el.innerHTML="";
+    });
+
+    fill("list-destaque", pick(0,5));
+    fill("list-liga", pick(1,5));
+    fill("list-mambas", pick(2,3));
+    fill("list-africa", pick(3,5));
+
+    var ul=document.getElementById("ultimas-ul");
+    NEWS.slice(0,10).forEach(function(n,i){
+      ul.innerHTML += '<li><span class="t">'+esc(n.time)+'</span><a href="#" data-i="'+i+'">'+esc(n.title)+'</a></li>';
+    });
+
+    var op=document.getElementById("opin-row");
+    OP.forEach(function(o,idx){
+      op.innerHTML += '<a class="opin-card" href="#" data-i="'+(idx%NEWS.length)+'"><div class="opin-photo"><img src="'+o.img+'" alt=""></div><div class="pad"><div class="tag">Opinião</div><span class="name">'+o.name+'</span><h3>'+o.title+'</h3></div></a>';
+    });
+
+    var ed=document.getElementById("ed-row");
+    ED_DATES.forEach(function(d,i){
+      ed.innerHTML += '<a class="ed-card" href="#" data-i="'+(i%NEWS.length)+'"><div class="ed-frame"><img src="'+ED_COVERS[i%ED_COVERS.length]+'" alt="Capa"></div><div class="date">'+d+'</div></a>';
+    });
+
+    var featureH1=document.querySelector(".feature h1");
+    var featureTag=document.querySelector(".feature .tag");
+    if(NEWS[0]){
+      if(featureH1) featureH1.textContent=NEWS[0].title;
+      if(featureTag) featureTag.textContent=NEWS[0].cat;
+    }
+
+    renderBlackNewsSection();
+    renderMaisGrid();
+    updateBigPost();
+    updateYellowTicker();
+  }
+
+  /* Secção preta do final: roda entre as notícias já carregadas a cada
+     30s. Não volta a pedir nada às APIs — só muda quais notícias (já
+     obtidas via NewsAPI/NewsData/GNews ou do conteúdo de exemplo)
+     aparecem nesta fila, para não gastar a cota diária gratuita. */
+  var BLACK_NEWS_OFFSET = 0;
+  function renderBlackNewsSection(){
+    var row=document.getElementById("black-news-row");
+    if(!row || !NEWS.length) return;
+    var count=Math.min(8, NEWS.length);
+    var html="";
+    for(var k=0;k<count;k++){
+      var idx=(BLACK_NEWS_OFFSET+k)%NEWS.length;
+      var n=NEWS[idx];
+      html += '<a class="black-news-card" href="#" data-i="'+idx+'">'+
+        '<div class="thumb"><img src="'+esc(n.img)+'" alt="" loading="lazy"></div>'+
+        '<span class="cat">// '+esc(n.cat)+' //</span>'+
+        '<h3>'+esc(n.title)+'</h3>'+
+      '</a>';
+    }
+    row.innerHTML = html;
+  }
+  setInterval(function(){
+    if(!NEWS.length) return;
+    BLACK_NEWS_OFFSET = (BLACK_NEWS_OFFSET + 1) % NEWS.length;
+    renderBlackNewsSection();
+  }, 30000);
+
+  function updateNewsStatus(provider, detail){
+    var el=document.getElementById("news-updated");
+    if(!el) return;
+    var now=new Date();
+    var stamp=now.toLocaleDateString("pt-PT")+" "+now.toLocaleTimeString("pt-PT",{hour:"2-digit",minute:"2-digit"});
+    el.textContent = provider && provider!=="fallback"
+      ? ("Notícias via "+provider+" — atualizado em "+stamp)
+      : ("Conteúdo de exemplo — fontes externas indisponíveis"+(detail?" ("+detail+")":""));
+  }
+
+  async function tryLoadApiNews(){
+    var cached=readNewsCache();
+    if(cached){
+      NEWS = cached.articles;
+      renderNewsUI();
+      updateNewsStatus(cached.provider);
+      return;
+    }
+
+    for(var i=0;i<NEWS_PROVIDERS.length;i++){
+      var provider=NEWS_PROVIDERS[i];
+      try{
+        var arts=await provider.fetch();
+        NEWS=arts;
+        writeNewsCache(arts, provider.name);
+        renderNewsUI();
+        updateNewsStatus(provider.name);
+        return;
+      }catch(err){
+        console.warn("MOZBOLA: "+provider.name+" indisponível, a tentar a próxima fonte.", err);
+      }
+    }
+
+    // todas as fontes externas falharam
+    NEWS = FALLBACK_NEWS;
+    renderNewsUI();
+    updateNewsStatus("fallback", "todas as fontes externas falharam");
+  }
+
+  /* Post grande de destaque (zona verde) — agora alimentado pelo NEWS
+     dinâmico: procura a notícia mais recente com categoria "Negócios"
+     (vinda da API ou do conteúdo de exemplo) e mostra-a aqui, com
+     imagem e texto reais. Só usa o conteúdo fixo abaixo como último
+     recurso, se não houver nenhuma notícia dessa categoria disponível
+     — assim o bloco nunca fica vazio. */
+  var BIG_POST_FALLBACK_TITLE = "Moçambola em debate: patrocínios e gestão profissional ganham destaque fora de campo";
+  var BIG_POST_FALLBACK = {
+    cat: "Negócios",
+    title: BIG_POST_FALLBACK_TITLE,
+    time: "Opinião",
+    img: "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=1200&q=85",
+    desc: "Clubes discutem contratos, direitos de transmissão e profissionalização da gestão desportiva.",
+    body: corpo(BIG_POST_FALLBACK_TITLE)
+  };
+  var bigPostNewsIndex = -1; // se aponta para um índice válido de NEWS, usa-se openArt(i); senão usa-se o fallback estático
+
+  function updateBigPost(){
+    var img=document.getElementById("big-post-img");
+    var tag=document.getElementById("big-post-tag");
+    var title=document.getElementById("big-post-title");
+    var desc=document.getElementById("big-post-desc");
+    if(!img) return;
+
+    var idx=-1;
+    for(var i=0;i<NEWS.length;i++){ if(NEWS[i].cat==="Negócios"){ idx=i; break; } }
+    bigPostNewsIndex=idx;
+
+    if(idx>-1){
+      var n=NEWS[idx];
+      img.src=n.img;
+      tag.textContent=n.cat;
+      title.textContent=n.title;
+      desc.textContent=n.desc || "";
+    } else {
+      img.src=BIG_POST_FALLBACK.img;
+      tag.textContent=BIG_POST_FALLBACK.cat;
+      title.textContent=BIG_POST_FALLBACK.title;
+      desc.textContent=BIG_POST_FALLBACK.desc;
+    }
+  }
+
+  var bigPostLink = document.getElementById("big-post-link");
+  if (bigPostLink){
+    bigPostLink.addEventListener("click", function(e){
+      e.preventDefault();
+      if(bigPostNewsIndex>-1){
+        openArt(bigPostNewsIndex); // notícia real: usa o leitor normal (com link para a fonte, se vier da API)
+        return;
+      }
+      document.getElementById("a-img").src = BIG_POST_FALLBACK.img;
+      document.getElementById("a-tag").textContent = BIG_POST_FALLBACK.cat;
+      document.getElementById("a-title").textContent = BIG_POST_FALLBACK.title;
+      document.getElementById("a-meta").textContent = BIG_POST_FALLBACK.time+" · MOZBOLA";
+      document.getElementById("a-body").innerHTML = BIG_POST_FALLBACK.body;
+      document.getElementById("home").classList.add("off");
+      document.getElementById("art").classList.add("on");
+      window.scrollTo(0,0);
+    });
+  }
+
+  /* Faixa amarela: passa a mostrar títulos reais das notícias mais
+     recentes (NewsAPI/NewsData/GNews ou conteúdo de exemplo), em vez
+     de um texto fixo. */
+  function updateYellowTicker(){
+    var el=document.getElementById("yellow-marquee-text");
+    if(!el || !NEWS.length) return;
+    var items=NEWS.slice(0,6).map(function(n){ return n.title.toUpperCase(); });
+    var text=items.join(" · ")+" · ";
+    el.textContent = text + text; // duplicado, para o loop do scroll não ter espaço vazio
+  }
+
+  renderNewsUI(); // primeira pintura imediata com o conteúdo de exemplo
+  tryLoadApiNews(); // percorre NEWS_PROVIDERS em ordem, até uma funcionar
+  setInterval(function(){
+    if(!readNewsCache()) tryLoadApiNews(); // garante atualização ao fim de 24h
+  }, 60*60*1000);
+
+  var cameFromMais=false; // lembra se o artigo foi aberto a partir da página "Mais Notícias"
+
+  function openArt(i){
+    var n=NEWS[i]; if(!n) return;
+    document.getElementById("a-img").src=n.img;
+    document.getElementById("a-tag").textContent=n.cat;
+    document.getElementById("a-title").textContent=n.title;
+    document.getElementById("a-meta").textContent=n.time+" · MOZBOLA"+(n.source==="api"?" · via "+n.sourceName:"");
+    if(n.source==="api"){
+      document.getElementById("a-body").innerHTML =
+        "<p>"+esc(n.desc||"Resumo não disponível.")+"</p>"+
+        "<p><a href=\""+esc(n.url)+"\" target=\"_blank\" rel=\"noopener\" style=\"color:var(--red);font-weight:800\">Ler a notícia completa em "+esc(n.sourceName)+" →</a></p>"+
+        "<p style=\"color:var(--muted);font-size:13px;margin-top:10px\">Notícia obtida via NewsAPI.org. O MOZBOLA não reproduz o conteúdo integral de fontes externas.</p>";
+    } else {
+      document.getElementById("a-body").innerHTML=n.body;
+    }
+    cameFromMais = document.getElementById("maisnoticias").classList.contains("on");
+    document.getElementById("maisnoticias").classList.remove("on");
+    document.getElementById("home").classList.add("off");
+    document.getElementById("art").classList.add("on");
+    window.scrollTo(0,0);
+  }
+  function closeArt(){
+    document.getElementById("art").classList.remove("on");
+    if(cameFromMais){
+      document.getElementById("maisnoticias").classList.add("on");
+    } else {
+      document.getElementById("home").classList.remove("off");
+    }
+  }
+
+  /* Página "Mais Notícias": grelha com todos os posts carregados
+     (NewsAPI/NewsData/GNews ou conteúdo de exemplo), imagens grandes. */
+  function renderMaisGrid(){
+    var grid=document.getElementById("mais-grid");
+    if(!grid) return;
+    grid.innerHTML = NEWS.map(function(n,i){
+      return '<a class="mais-card" href="#" data-i="'+i+'">'+
+        '<img class="thumb" src="'+esc(n.img)+'" alt="" loading="lazy">'+
+        '<div class="pad"><div class="tag">'+esc(n.cat)+'</div><h3>'+esc(n.title)+'</h3><div class="meta">'+esc(n.time)+'</div></div>'+
+      '</a>';
+    }).join('');
+  }
+  function openMaisNoticias(e){
+    if(e) e.preventDefault();
+    renderMaisGrid();
+    document.getElementById("art").classList.remove("on");
+    document.getElementById("home").classList.add("off");
+    document.getElementById("maisnoticias").classList.add("on");
+    window.scrollTo(0,0);
+  }
+  function closeMaisNoticias(){
+    document.getElementById("maisnoticias").classList.remove("on");
+    document.getElementById("home").classList.remove("off");
+  }
+
+  document.body.addEventListener("click",function(e){
+    var el=e.target.closest("[data-i]");
+    if(el){ e.preventDefault(); openArt(parseInt(el.getAttribute("data-i"),10)); }
+  });
+  document.getElementById("back1").onclick=closeArt;
+  document.getElementById("back2").onclick=closeArt;
+  document.getElementById("logo").onclick=function(e){e.preventDefault();closeArt();closeMaisNoticias();};
+  document.getElementById("burger").onclick=function(){document.getElementById("nav").classList.toggle("open");};
+  document.getElementById("black-news-more-link").addEventListener("click", openMaisNoticias);
+  document.getElementById("back-mais").onclick = closeMaisNoticias;
+
+  /* Feature: Pexels API sem repetir + fallback */
+  (function(){
+    var img=document.getElementById("feature-img");
+    if(!img) return;
+    var KEY="SXkZ68NSP0EZcMb6bBrHaSxXpGkzu7AOJKzdIhLco82bpXWFIgLz99au";
+    var queries=["soccer player action","football match players","soccer stadium crowd"];
+    var qi=0,page=1,queue=[],used={},loading=false;
+    async function fetchMore(){
+      if(loading) return; loading=true;
+      try{
+        var q=queries[qi%queries.length];
+        var res=await fetch("https://api.pexels.com/v1/search?query="+encodeURIComponent(q)+"&per_page=15&page="+page+"&orientation=landscape",{headers:{Authorization:KEY,Accept:"application/json"}});
+        if(!res.ok) throw new Error(res.status);
+        var data=await res.json();
+        (data.photos||[]).forEach(function(ph){
+          var id=String(ph.id); if(used[id]) return;
+          var src=ph.src&&(ph.src.large||ph.src.medium); if(!src) return;
+          used[id]=true; queue.push(src);
+        });
+        page++; if(page>12){page=1;qi++;}
+      }catch(e){}
+      loading=false;
+    }
+    async function showNext(){
+      if(queue.length<3) await fetchMore();
+      if(!queue.length){
+        var left=IMGS.filter(function(u){return !used[u];});
+        if(!left.length) return;
+        used[left[0]]=true; queue.push(left[0]);
+      }
+      var src=queue.shift();
+      img.style.opacity="0";
+      setTimeout(function(){
+        img.onerror=function(){img.onerror=null;showNext();};
+        img.src=src; img.style.opacity="1";
+      },280);
+      if(queue.length<4) fetchMore();
+    }
+    fetchMore().then(showNext);
+    setInterval(showNext,2000);
+  })();
+})();
+</script>
+</body>
+</html>
